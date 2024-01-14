@@ -13,17 +13,21 @@ import {
   Header,
   Request,
   Redirect,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from '../../service/user/user.service';
 import { CreateUserDto } from '../../dto/user/create-user.dto';
 import { UpdateUserDto } from '../../dto/user/update-user.dto';
 import { Observable, Observer } from 'rxjs';
 
+
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  
   @Post('create')
+  @UsePipes(ValidationPipe)
   @HttpCode(204)
   @Header('Cache-Control', 'none')
   create(@Body() createUserDto: CreateUserDto) {
@@ -32,6 +36,7 @@ export class UserController {
 
   @Get('cat/:id')
   @HttpCode(200)
+  @UsePipes(ValidationPipe)
   @Header('Cache-Control', 'none')
   findAll(
     @Param('id') id: number,
@@ -68,7 +73,7 @@ export class UserController {
   @HttpCode(302)
   @Redirect('localhost:3000', 302)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return { url: 'localhost:3000/user/cat/21', statusCode: 302 };
+    return { url: '/localhost:3000/user/cat/21', statusCode: 302 };
   }
 
   @Delete(':id')

@@ -15,10 +15,9 @@ import { InvitedId } from "./inviteId.entity";
 export class Project extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
   @Column({ type: "varchar", name: "name" })
   name: string;
-  @Column({ type: "varchar", name: "slug" })
+  @Column({ type: "varchar", name: "slug",unique:true })
   slug: string;
   @Column({ type: "int", name: "process" })
   process: number;
