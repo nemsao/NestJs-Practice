@@ -1,14 +1,21 @@
-import { Controller, Req, Res } from '@nestjs/common';
 import {
   Post,
-  HttpCode,
+  Controller,
+  Req,
+  Res,
+  Put,
   UsePipes,
-  Header,
+  Get,
   Body,
   ValidationPipe,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { CreateProjectDto } from 'src/user/dto/project/create-project.dto';
+import { DeleteProjectDto } from 'src/user/dto/project/delete-project.dto';
+import { UpdateProjectDto } from 'src/user/dto/project/update-project.dto';
 import { ProjectPipe } from 'src/user/pipe/project/project.pipe';
+import { ProjectUpdatePipe } from 'src/user/pipe/project_update/project_update.pipe';
 import { ProjectService } from 'src/user/service/project/project.service';
 @Controller('project')
 export class ProjectController {
@@ -22,4 +29,28 @@ export class ProjectController {
   ) {
     return this.projectService.create(createProjectDto).then((e) => e);
   }
+  @Get()
+  async get(@Res({ passthrough: true }) response: Response) {
+    return this.projectService.get();
+  }
+  @Put()
+  async update(
+    @Body(ProjectUpdatePipe) UpdateProjectDto: UpdateProjectDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.projectService.update(UpdateProjectDto);
+  }
+  @Delete()
+  async delete(
+    @Body() deleteProjectDto:DeleteProjectDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    try{await this.projectService.delete(deleteProjectDto.id)
+       return {message:"Thêm thành công"};
+    }catch(err){
+      return {Error:err};
+    }
+   
+  }
+
 }

@@ -21,11 +21,10 @@ import { CreateUserDto } from '../../dto/user/create-user.dto';
 import { UpdateUserDto } from '../../dto/user/update-user.dto';
 import { Observable, Observer } from 'rxjs';
 
-
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  
+
   @Post('create')
   @UsePipes(ValidationPipe)
   @HttpCode(204)
@@ -39,28 +38,34 @@ export class UserController {
   @UsePipes(ValidationPipe)
   @Header('Cache-Control', 'none')
   findAll(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Res({ passthrough: true }) response: Response,
-  ): Observable<number> {
-    const observable: Observable<number> = new Observable((observer) => {
+  ) {
+    const observable = new Observable( (observer) => {
       try {
-        return observer.next(id);
+      observer.next('Eating')
+      observer.next('Jumping')
+      observer.next('Rolling')
+      return observer.complete()
+      
       } catch (err) {
         return observer.error(err);
       }
     });
 
-    const observer: Observer<number> = {
-      next: (id: number): number => {
+    const observer: Observer<string> = {
+      next: (id: string): string => {
         console.log('id' + id);
-        const news = id;
+        const news = id + 'hahaaha';
         return news;
       },
       error: (error: Error) => error,
-      complete: () => 'done',
+      complete: () => {
+        console.log('done ' + 'whatching this cat');
+      },
     };
+
     observable.subscribe(observer);
-    return observable;
   }
 
   @Get(':id')
