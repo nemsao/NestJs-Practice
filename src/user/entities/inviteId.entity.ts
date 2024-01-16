@@ -14,14 +14,14 @@ import { User } from "./user.entity";
 export class InvitedId extends BaseEntity {
   @PrimaryGeneratedColumn({ name: "id", type: "int" })
   id: number;
-  @Column({ type: "varchar", name: "InviteToProject" })
-  invitation: string;
+  @Column({ type: "int", name: "InviteToProject" })
+  invitation: number;
   @OneToMany(() => Project, (project) => project.inviteId, {
     onDelete: "NO ACTION",
   })
   @JoinColumn({ name: "Project Id" })
   project: Project[];
-  @OneToOne(() => User, { onDelete: "NO ACTION" })
+  @OneToOne(() => User,user=>user.id, { onDelete: "NO ACTION" })
   @JoinColumn({ name: "User Id" })
   User: User;
 }
