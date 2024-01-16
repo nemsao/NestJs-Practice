@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { UserController } from './controller/user/user.controller';
 import { UserService } from './service/user/user.service';
 import { ProjectController } from './controller/project/project.controller';
@@ -12,6 +12,18 @@ import { Project } from './entities/project.entity';
   imports:[TypeOrmModule.forFeature([User,Project]) ],
   controllers: [UserController, ProjectController],
   providers: [UserService, ProjectService],
-  exports:[UserService,ProjectService]
+  exports:[UserService,ProjectService,TypeOrmModule.forFeature([User,Project])]
 })
-export class UserModule {}
+export class UserModule {
+  
+  static forRoot(en:string[],option):DynamicModule{
+
+     return{
+      module:UserModule,
+      providers:[UserModule,{
+        provide:'User_Config',
+        useValue:option
+      }]
+     }
+  }
+}

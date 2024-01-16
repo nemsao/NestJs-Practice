@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, Scope,MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {TypeOrmModule} from '@nestjs/typeorm'
@@ -10,8 +10,8 @@ import { Status } from './user/entities/status.entity';
 import { InvitedId } from './user/entities/inviteId.entity';
 import { Priority } from './user/entities/priority.entity';
 import { UserModule } from './user/user.module';
-
-
+import { StatusModule } from './module-connection/module-connection.module';
+import {projectmiddleware}from './user/project.middleware'
 dotenv.config()
 
 const { USER, PASSWORD, DATABASE ,PORT_DATA,HOST} = process.env
@@ -25,8 +25,14 @@ const { USER, PASSWORD, DATABASE ,PORT_DATA,HOST} = process.env
     database: DATABASE,
     synchronize: true,
     entities: [User,Project,Task,Status,InvitedId,Priority],
-  }),UserModule],
+  }),UserModule, StatusModule.register({file:'Status'})],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(projectmiddleware)
+      .forRoutes('project');
+  }
+}
